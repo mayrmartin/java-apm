@@ -2,6 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.dto.CreatePurchaseOrderDTO;
 import com.example.restapi.dto.CreatePurchaseOrderRespondDTO;
+import com.example.restapi.dto.GetProductsForOrderMessageResponseDTO;
 import com.example.restapi.dto.UpdateOrderDTO;
 import com.example.restapi.service.PurchaseOrderService;
 import org.slf4j.Logger;
@@ -23,7 +24,8 @@ public class PurchaseOrderController {
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     public ResponseEntity getProduct(@PathVariable(name = "id") String id) {
-        return ResponseEntity.ok().body(purchaseOrderService.getOrderInformation(id));
+        GetProductsForOrderMessageResponseDTO respondDTO = new GetProductsForOrderMessageResponseDTO(purchaseOrderService.getOrderInformation(id).getProducts());
+        return ResponseEntity.ok().body(respondDTO);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

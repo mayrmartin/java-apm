@@ -2,6 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.dto.CreateProductDTO;
 import com.example.restapi.dto.CreateProductResponseDTO;
+import com.example.restapi.dto.GetProductInformationResponseDTO;
 import com.example.restapi.model.Product;
 import com.example.restapi.service.ProductsService;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class ProductsController {
 
          Product p = productsService.getProduct(id);
          if (p != null)
-             return ResponseEntity.ok(p);
+             return ResponseEntity.ok(new GetProductInformationResponseDTO(p));
          else
              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }

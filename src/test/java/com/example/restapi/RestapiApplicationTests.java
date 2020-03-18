@@ -1,32 +1,20 @@
 package com.example.restapi;
 
-import com.example.restapi.dto.CreateProductDTO;
-import com.example.restapi.dto.CreateProductResponseDTO;
-import com.example.restapi.dto.CreatePurchaseOrderDTO;
-import com.example.restapi.dto.CreatePurchaseOrderRespondDTO;
+import com.example.restapi.dto.*;
 import com.example.restapi.model.Product;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RestapiApplicationTests {
 
@@ -43,9 +31,26 @@ public class RestapiApplicationTests {
     public void init() throws Exception {
         createProducts();
         createOrder();
+        requestProductsForOrder();
     }
 
     @Test
+    public void requestAllProducts() throws Exception{
+        createProducts();
+        createOrder();
+        getProduct();
+    }
+
+    private void requestProductsForOrder() throws Exception{
+        RestTemplate restTemplate = new RestTemplate();
+
+         GetProductsForOrderMessageResponseDTO response = restTemplate.getForObject(orderApi+"/"+order, GetProductsForOrderMessageResponseDTO.class);
+         for(Product p : response.getProducts())
+            LOG.info("Product: "+p.getId());
+
+
+    }
+
     public void createProducts() throws Exception
     {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -72,7 +77,6 @@ public class RestapiApplicationTests {
 
     }
 
-    @Test
     public void createOrder() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         RestTemplate restTemplate = new RestTemplate();
@@ -89,5 +93,20 @@ public class RestapiApplicationTests {
         order = responseDTO.getId();
         LOG.info("Created Order: "+order);
     }
+
+
+    public void getProduct() throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+
+        for(String id : products)
+        {
+            String response = restTemplate.getForObject(productApi+"/"+id,String.class);
+            LOG.info("Product: "+response);
+        }
+
+
+    }
+
+
 
 }
